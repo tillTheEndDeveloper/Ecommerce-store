@@ -1,0 +1,63 @@
+﻿@using ePhoneCourseWork.Data.ViewModels
+@model IEnumerable<UserVM>
+
+@{
+    ViewData["Title"] = "List of Users";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <p>
+            <h4>List of all Users</h4>
+        </p>
+
+        <table class="table">
+            <thead>
+                <tr class="text-center">
+                    <th>@Html.DisplayNameFor(model => model.FullName)</th>
+                    <th>@Html.DisplayNameFor(model => model.UserName)</th>
+                    <th>@Html.DisplayNameFor(model => model.Email)</th>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <th>Actions</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="align-middle">
+                            @Html.DisplayFor(modelItem => item.FullName)
+                        </td>
+                        <td class="align-middle">
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </td>
+                        <td class="align-middle">
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td class="align-middle">
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                            {
+                                @if (item.Roles.Contains("BlackListed"))
+                                {
+                                    <form method="post" asp-controller="ApplicationUser" asp-action="RemoveFromBlacklist">
+                                        <input type="hidden" name="userId" value="@item.UserId" />
+                                        <input type="submit" value="Remove From Blacklist" />
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-controller="ApplicationUser" asp-action="BlacklistUser">
+                                        <input type="hidden" name="userId" value="@item.UserId"/>
+                                        <input type="submit" value="Blacklist User"/>
+                                    </form>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
